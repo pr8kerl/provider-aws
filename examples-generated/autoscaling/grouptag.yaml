@@ -8,9 +8,7 @@ metadata:
   name: example
 spec:
   forProvider:
-    autoscalingGroupNameSelector:
-      matchLabels:
-        testing.upbound.io/example-name: example
+    autoscalingGroupName: ${each.value}
     for_each: |-
       ${toset(
           [for asg in flatten(

@@ -68,7 +68,7 @@ spec:
                     description: –  Name of the EKS Cluster.
                     type: string
                   clusterNameRef:
-                    description: Reference to a Cluster to populate clusterName.
+                    description: Reference to a Cluster in eks to populate clusterName.
                     properties:
                       name:
                         description: Name of the referenced object.
@@ -102,7 +102,7 @@ spec:
                     - name
                     type: object
                   clusterNameSelector:
-                    description: Selector for a Cluster to populate clusterName.
+                    description: Selector for a Cluster in eks to populate clusterName.
                     properties:
                       matchControllerRef:
                         description: MatchControllerRef ensures an object with the
@@ -157,6 +157,9 @@ spec:
                           description: A prefix that is prepended to group claims
                             e.g., oidc:.
                           type: string
+                        identityProviderConfigName:
+                          description: –  The name of the identity provider config.
+                          type: string
                         issuerUrl:
                           description: Issuer URL for the OpenID Connect identity
                             provider.
@@ -176,6 +179,7 @@ spec:
                           type: string
                       required:
                       - clientId
+                      - identityProviderConfigName
                       - issuerUrl
                       type: object
                     type: array

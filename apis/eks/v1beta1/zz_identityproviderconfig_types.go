@@ -45,6 +45,10 @@ type IdentityProviderConfigOidcParameters struct {
 	// +kubebuilder:validation:Optional
 	GroupsPrefix *string `json:"groupsPrefix,omitempty" tf:"groups_prefix,omitempty"`
 
+	// –  The name of the identity provider config.
+	// +kubebuilder:validation:Required
+	IdentityProviderConfigName *string `json:"identityProviderConfigName" tf:"identity_provider_config_name,omitempty"`
+
 	// Issuer URL for the OpenID Connect identity provider.
 	// +kubebuilder:validation:Required
 	IssuerURL *string `json:"issuerUrl" tf:"issuer_url,omitempty"`
@@ -65,15 +69,15 @@ type IdentityProviderConfigOidcParameters struct {
 type IdentityProviderConfigParameters struct {
 
 	// –  Name of the EKS Cluster.
-	// +crossplane:generate:reference:type=Cluster
+	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/eks/v1beta1.Cluster
 	// +kubebuilder:validation:Optional
 	ClusterName *string `json:"clusterName,omitempty" tf:"cluster_name,omitempty"`
 
-	// Reference to a Cluster to populate clusterName.
+	// Reference to a Cluster in eks to populate clusterName.
 	// +kubebuilder:validation:Optional
 	ClusterNameRef *v1.Reference `json:"clusterNameRef,omitempty" tf:"-"`
 
-	// Selector for a Cluster to populate clusterName.
+	// Selector for a Cluster in eks to populate clusterName.
 	// +kubebuilder:validation:Optional
 	ClusterNameSelector *v1.Selector `json:"clusterNameSelector,omitempty" tf:"-"`
 

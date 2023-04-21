@@ -17,9 +17,7 @@ spec:
     - autoscaling:EC2_INSTANCE_LAUNCH_ERROR
     - autoscaling:EC2_INSTANCE_TERMINATE_ERROR
     region: us-west-1
-    topicArnSelector:
-      matchLabels:
-        testing.upbound.io/example-name: example
+    topicArn: ${aws_sns_topic.example.arn}
 
 ---
 
@@ -45,20 +43,6 @@ metadata:
   labels:
     testing.upbound.io/example-name: foo
   name: foo
-spec:
-  forProvider:
-    region: us-west-1
-
----
-
-apiVersion: sns.aws.upbound.io/v1beta1
-kind: Topic
-metadata:
-  annotations:
-    meta.upbound.io/example-id: autoscaling/v1beta1/notification
-  labels:
-    testing.upbound.io/example-name: example
-  name: example
 spec:
   forProvider:
     region: us-west-1

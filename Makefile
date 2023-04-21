@@ -61,18 +61,18 @@ UPTEST_VERSION = v0.5.0
 # ====================================================================================
 # Setup Images
 
-REGISTRY_ORGS ?= xpkg.upbound.io/upbound
-IMAGES = provider-aws
+REGISTRY_ORGS ?= 361053881171.dkr.ecr.ap-southeast-2.amazonaws.com
+IMAGES = platform/upbound-aws
 -include build/makelib/imagelight.mk
 
 # ====================================================================================
 # Setup XPKG
 
-XPKG_REG_ORGS ?= xpkg.upbound.io/upbound
+XPKG_REG_ORGS ?= 361053881171.dkr.ecr.ap-southeast-2.amazonaws.com
 # NOTE(hasheddan): skip promoting on xpkg.upbound.io as channel tags are
 # inferred.
-XPKG_REG_ORGS_NO_PROMOTE ?= xpkg.upbound.io/upbound
-XPKGS = provider-aws
+XPKG_REG_ORGS_NO_PROMOTE ?= 361053881171.dkr.ecr.ap-southeast-2.amazonaws.com
+XPKGS = platform/upbound-aws
 -include build/makelib/xpkg.mk
 
 # NOTE(hasheddan): we force image building to happen prior to xpkg build so that

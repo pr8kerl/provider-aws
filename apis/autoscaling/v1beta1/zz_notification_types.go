@@ -34,18 +34,8 @@ type NotificationParameters struct {
 	Region *string `json:"region" tf:"-"`
 
 	// Topic ARN for notifications to be sent through
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/sns/v1beta1.Topic
-	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("arn",true)
-	// +kubebuilder:validation:Optional
-	TopicArn *string `json:"topicArn,omitempty" tf:"topic_arn,omitempty"`
-
-	// Reference to a Topic in sns to populate topicArn.
-	// +kubebuilder:validation:Optional
-	TopicArnRef *v1.Reference `json:"topicArnRef,omitempty" tf:"-"`
-
-	// Selector for a Topic in sns to populate topicArn.
-	// +kubebuilder:validation:Optional
-	TopicArnSelector *v1.Selector `json:"topicArnSelector,omitempty" tf:"-"`
+	// +kubebuilder:validation:Required
+	TopicArn *string `json:"topicArn" tf:"topic_arn,omitempty"`
 }
 
 // NotificationSpec defines the desired state of Notification
