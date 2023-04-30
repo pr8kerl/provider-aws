@@ -477,18 +477,8 @@ type LogPublishingOptionsObservation struct {
 type LogPublishingOptionsParameters struct {
 
 	// ARN of the Cloudwatch log group to which log needs to be published.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/cloudwatchlogs/v1beta1.Group
-	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("arn",true)
-	// +kubebuilder:validation:Optional
-	CloudwatchLogGroupArn *string `json:"cloudwatchLogGroupArn,omitempty" tf:"cloudwatch_log_group_arn,omitempty"`
-
-	// Reference to a Group in cloudwatchlogs to populate cloudwatchLogGroupArn.
-	// +kubebuilder:validation:Optional
-	CloudwatchLogGroupArnRef *v1.Reference `json:"cloudwatchLogGroupArnRef,omitempty" tf:"-"`
-
-	// Selector for a Group in cloudwatchlogs to populate cloudwatchLogGroupArn.
-	// +kubebuilder:validation:Optional
-	CloudwatchLogGroupArnSelector *v1.Selector `json:"cloudwatchLogGroupArnSelector,omitempty" tf:"-"`
+	// +kubebuilder:validation:Required
+	CloudwatchLogGroupArn *string `json:"cloudwatchLogGroupArn" tf:"cloudwatch_log_group_arn,omitempty"`
 
 	// Whether given log publishing option is enabled or not.
 	// +kubebuilder:validation:Optional

@@ -33,59 +33,30 @@ type AttachmentObservation struct {
 type AttachmentParameters struct {
 
 	// ARN of an ALB Target Group.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/elbv2/v1beta1.LBTargetGroup
-	// +crossplane:generate:reference:extractor=github.com/upbound/provider-aws/config/common.ARNExtractor()
 	// +kubebuilder:validation:Optional
 	ALBTargetGroupArn *string `json:"albTargetGroupArn,omitempty" tf:"alb_target_group_arn,omitempty"`
 
-	// Reference to a LBTargetGroup in elbv2 to populate albTargetGroupArn.
-	// +kubebuilder:validation:Optional
-	ALBTargetGroupArnRef *v1.Reference `json:"albTargetGroupArnRef,omitempty" tf:"-"`
-
-	// Selector for a LBTargetGroup in elbv2 to populate albTargetGroupArn.
-	// +kubebuilder:validation:Optional
-	ALBTargetGroupArnSelector *v1.Selector `json:"albTargetGroupArnSelector,omitempty" tf:"-"`
-
 	// Name of ASG to associate with the ELB.
-	// +crossplane:generate:reference:type=AutoscalingGroup
+	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/autoscaling/v1beta1.AutoscalingGroup
+	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractResourceID()
 	// +kubebuilder:validation:Optional
 	AutoscalingGroupName *string `json:"autoscalingGroupName,omitempty" tf:"autoscaling_group_name,omitempty"`
 
-	// Reference to a AutoscalingGroup to populate autoscalingGroupName.
+	// Reference to a AutoscalingGroup in autoscaling to populate autoscalingGroupName.
 	// +kubebuilder:validation:Optional
 	AutoscalingGroupNameRef *v1.Reference `json:"autoscalingGroupNameRef,omitempty" tf:"-"`
 
-	// Selector for a AutoscalingGroup to populate autoscalingGroupName.
+	// Selector for a AutoscalingGroup in autoscaling to populate autoscalingGroupName.
 	// +kubebuilder:validation:Optional
 	AutoscalingGroupNameSelector *v1.Selector `json:"autoscalingGroupNameSelector,omitempty" tf:"-"`
 
 	// Name of the ELB.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/elb/v1beta1.ELB
-	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractResourceID()
 	// +kubebuilder:validation:Optional
 	ELB *string `json:"elb,omitempty" tf:"elb,omitempty"`
 
-	// Reference to a ELB in elb to populate elb.
-	// +kubebuilder:validation:Optional
-	ELBRef *v1.Reference `json:"elbRef,omitempty" tf:"-"`
-
-	// Selector for a ELB in elb to populate elb.
-	// +kubebuilder:validation:Optional
-	ELBSelector *v1.Selector `json:"elbSelector,omitempty" tf:"-"`
-
 	// ARN of a load balancer target group.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/elbv2/v1beta1.LBTargetGroup
-	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("arn",true)
 	// +kubebuilder:validation:Optional
 	LBTargetGroupArn *string `json:"lbTargetGroupArn,omitempty" tf:"lb_target_group_arn,omitempty"`
-
-	// Reference to a LBTargetGroup in elbv2 to populate lbTargetGroupArn.
-	// +kubebuilder:validation:Optional
-	LBTargetGroupArnRef *v1.Reference `json:"lbTargetGroupArnRef,omitempty" tf:"-"`
-
-	// Selector for a LBTargetGroup in elbv2 to populate lbTargetGroupArn.
-	// +kubebuilder:validation:Optional
-	LBTargetGroupArnSelector *v1.Selector `json:"lbTargetGroupArnSelector,omitempty" tf:"-"`
 
 	// Region is the region you'd like your resource to be created in.
 	// +upjet:crd:field:TFTag=-

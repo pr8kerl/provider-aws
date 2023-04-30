@@ -13,8 +13,7 @@ import (
 	v1beta13 "github.com/upbound/provider-aws/apis/iam/v1beta1"
 	v1beta1 "github.com/upbound/provider-aws/apis/kms/v1beta1"
 	v1beta11 "github.com/upbound/provider-aws/apis/s3/v1beta1"
-	v1beta15 "github.com/upbound/provider-aws/apis/secretsmanager/v1beta1"
-	v1beta14 "github.com/upbound/provider-aws/apis/sns/v1beta1"
+	v1beta14 "github.com/upbound/provider-aws/apis/secretsmanager/v1beta1"
 	common "github.com/upbound/provider-aws/config/common"
 	resource "github.com/upbound/upjet/pkg/resource"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -409,32 +408,6 @@ func (mg *DBSnapshotCopy) ResolveReferences(ctx context.Context, c client.Reader
 	return nil
 }
 
-// ResolveReferences of this EventSubscription.
-func (mg *EventSubscription) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var rsp reference.ResolutionResponse
-	var err error
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.SnsTopic),
-		Extract:      resource.ExtractParamPath("arn", true),
-		Reference:    mg.Spec.ForProvider.SnsTopicRef,
-		Selector:     mg.Spec.ForProvider.SnsTopicSelector,
-		To: reference.To{
-			List:    &v1beta14.TopicList{},
-			Managed: &v1beta14.Topic{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.SnsTopic")
-	}
-	mg.Spec.ForProvider.SnsTopic = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.SnsTopicRef = rsp.ResolvedReference
-
-	return nil
-}
-
 // ResolveReferences of this GlobalCluster.
 func (mg *GlobalCluster) ResolveReferences(ctx context.Context, c client.Reader) error {
 	r := reference.NewAPIResolver(c, mg)
@@ -593,8 +566,8 @@ func (mg *Proxy) ResolveReferences(ctx context.Context, c client.Reader) error {
 			Reference:    mg.Spec.ForProvider.Auth[i3].SecretArnRef,
 			Selector:     mg.Spec.ForProvider.Auth[i3].SecretArnSelector,
 			To: reference.To{
-				List:    &v1beta15.SecretList{},
-				Managed: &v1beta15.Secret{},
+				List:    &v1beta14.SecretList{},
+				Managed: &v1beta14.Secret{},
 			},
 		})
 		if err != nil {

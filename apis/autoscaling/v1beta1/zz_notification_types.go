@@ -45,18 +45,8 @@ type NotificationParameters struct {
 	Region *string `json:"region" tf:"-"`
 
 	// Topic ARN for notifications to be sent through
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/sns/v1beta1.Topic
-	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("arn",true)
 	// +kubebuilder:validation:Optional
 	TopicArn *string `json:"topicArn,omitempty" tf:"topic_arn,omitempty"`
-
-	// Reference to a Topic in sns to populate topicArn.
-	// +kubebuilder:validation:Optional
-	TopicArnRef *v1.Reference `json:"topicArnRef,omitempty" tf:"-"`
-
-	// Selector for a Topic in sns to populate topicArn.
-	// +kubebuilder:validation:Optional
-	TopicArnSelector *v1.Selector `json:"topicArnSelector,omitempty" tf:"-"`
 }
 
 // NotificationSpec defines the desired state of Notification
@@ -85,6 +75,7 @@ type Notification struct {
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.groupNames)",message="groupNames is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.notifications)",message="notifications is a required parameter"
+	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.topicArn)",message="topicArn is a required parameter"
 	Spec   NotificationSpec   `json:"spec"`
 	Status NotificationStatus `json:"status,omitempty"`
 }

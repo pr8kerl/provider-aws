@@ -9,11 +9,8 @@ import (
 	"context"
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
-	v1beta12 "github.com/upbound/provider-aws/apis/ec2/v1beta1"
-	v1beta11 "github.com/upbound/provider-aws/apis/elb/v1beta1"
-	v1beta1 "github.com/upbound/provider-aws/apis/elbv2/v1beta1"
-	v1beta13 "github.com/upbound/provider-aws/apis/iam/v1beta1"
-	v1beta14 "github.com/upbound/provider-aws/apis/sns/v1beta1"
+	v1beta1 "github.com/upbound/provider-aws/apis/ec2/v1beta1"
+	v1beta11 "github.com/upbound/provider-aws/apis/iam/v1beta1"
 	common "github.com/upbound/provider-aws/config/common"
 	resource "github.com/upbound/upjet/pkg/resource"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
@@ -27,24 +24,8 @@ func (mg *Attachment) ResolveReferences(ctx context.Context, c client.Reader) er
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.ALBTargetGroupArn),
-		Extract:      common.ARNExtractor(),
-		Reference:    mg.Spec.ForProvider.ALBTargetGroupArnRef,
-		Selector:     mg.Spec.ForProvider.ALBTargetGroupArnSelector,
-		To: reference.To{
-			List:    &v1beta1.LBTargetGroupList{},
-			Managed: &v1beta1.LBTargetGroup{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.ALBTargetGroupArn")
-	}
-	mg.Spec.ForProvider.ALBTargetGroupArn = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.ALBTargetGroupArnRef = rsp.ResolvedReference
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
 		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.AutoscalingGroupName),
-		Extract:      reference.ExternalName(),
+		Extract:      resource.ExtractResourceID(),
 		Reference:    mg.Spec.ForProvider.AutoscalingGroupNameRef,
 		Selector:     mg.Spec.ForProvider.AutoscalingGroupNameSelector,
 		To: reference.To{
@@ -58,38 +39,6 @@ func (mg *Attachment) ResolveReferences(ctx context.Context, c client.Reader) er
 	mg.Spec.ForProvider.AutoscalingGroupName = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.AutoscalingGroupNameRef = rsp.ResolvedReference
 
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.ELB),
-		Extract:      resource.ExtractResourceID(),
-		Reference:    mg.Spec.ForProvider.ELBRef,
-		Selector:     mg.Spec.ForProvider.ELBSelector,
-		To: reference.To{
-			List:    &v1beta11.ELBList{},
-			Managed: &v1beta11.ELB{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.ELB")
-	}
-	mg.Spec.ForProvider.ELB = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.ELBRef = rsp.ResolvedReference
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.LBTargetGroupArn),
-		Extract:      resource.ExtractParamPath("arn", true),
-		Reference:    mg.Spec.ForProvider.LBTargetGroupArnRef,
-		Selector:     mg.Spec.ForProvider.LBTargetGroupArnSelector,
-		To: reference.To{
-			List:    &v1beta1.LBTargetGroupList{},
-			Managed: &v1beta1.LBTargetGroup{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.LBTargetGroupArn")
-	}
-	mg.Spec.ForProvider.LBTargetGroupArn = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.LBTargetGroupArnRef = rsp.ResolvedReference
-
 	return nil
 }
 
@@ -98,7 +47,6 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 	r := reference.NewAPIResolver(c, mg)
 
 	var rsp reference.ResolutionResponse
-	var mrsp reference.MultiResolutionResponse
 	var err error
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
@@ -124,8 +72,8 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 			Reference:    mg.Spec.ForProvider.LaunchTemplate[i3].IDRef,
 			Selector:     mg.Spec.ForProvider.LaunchTemplate[i3].IDSelector,
 			To: reference.To{
-				List:    &v1beta12.LaunchTemplateList{},
-				Managed: &v1beta12.LaunchTemplate{},
+				List:    &v1beta1.LaunchTemplateList{},
+				Managed: &v1beta1.LaunchTemplate{},
 			},
 		})
 		if err != nil {
@@ -133,6 +81,24 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 		}
 		mg.Spec.ForProvider.LaunchTemplate[i3].ID = reference.ToPtrValue(rsp.ResolvedValue)
 		mg.Spec.ForProvider.LaunchTemplate[i3].IDRef = rsp.ResolvedReference
+
+	}
+	for i3 := 0; i3 < len(mg.Spec.ForProvider.LaunchTemplate); i3++ {
+		rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
+			CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.LaunchTemplate[i3].Version),
+			Extract:      resource.ExtractParamPath("latest_version", true),
+			Reference:    mg.Spec.ForProvider.LaunchTemplate[i3].VersionRef,
+			Selector:     mg.Spec.ForProvider.LaunchTemplate[i3].VersionSelector,
+			To: reference.To{
+				List:    &v1beta1.LaunchTemplateList{},
+				Managed: &v1beta1.LaunchTemplate{},
+			},
+		})
+		if err != nil {
+			return errors.Wrap(err, "mg.Spec.ForProvider.LaunchTemplate[i3].Version")
+		}
+		mg.Spec.ForProvider.LaunchTemplate[i3].Version = reference.ToPtrValue(rsp.ResolvedValue)
+		mg.Spec.ForProvider.LaunchTemplate[i3].VersionRef = rsp.ResolvedReference
 
 	}
 	for i3 := 0; i3 < len(mg.Spec.ForProvider.MixedInstancesPolicy); i3++ {
@@ -144,8 +110,8 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 					Reference:    mg.Spec.ForProvider.MixedInstancesPolicy[i3].LaunchTemplate[i4].LaunchTemplateSpecification[i5].LaunchTemplateIDRef,
 					Selector:     mg.Spec.ForProvider.MixedInstancesPolicy[i3].LaunchTemplate[i4].LaunchTemplateSpecification[i5].LaunchTemplateIDSelector,
 					To: reference.To{
-						List:    &v1beta12.LaunchTemplateList{},
-						Managed: &v1beta12.LaunchTemplate{},
+						List:    &v1beta1.LaunchTemplateList{},
+						Managed: &v1beta1.LaunchTemplate{},
 					},
 				})
 				if err != nil {
@@ -167,8 +133,8 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 						Reference:    mg.Spec.ForProvider.MixedInstancesPolicy[i3].LaunchTemplate[i4].Override[i5].LaunchTemplateSpecification[i6].LaunchTemplateIDRef,
 						Selector:     mg.Spec.ForProvider.MixedInstancesPolicy[i3].LaunchTemplate[i4].Override[i5].LaunchTemplateSpecification[i6].LaunchTemplateIDSelector,
 						To: reference.To{
-							List:    &v1beta12.LaunchTemplateList{},
-							Managed: &v1beta12.LaunchTemplate{},
+							List:    &v1beta1.LaunchTemplateList{},
+							Managed: &v1beta1.LaunchTemplate{},
 						},
 					})
 					if err != nil {
@@ -187,8 +153,8 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 		Reference:    mg.Spec.ForProvider.PlacementGroupRef,
 		Selector:     mg.Spec.ForProvider.PlacementGroupSelector,
 		To: reference.To{
-			List:    &v1beta12.PlacementGroupList{},
-			Managed: &v1beta12.PlacementGroup{},
+			List:    &v1beta1.PlacementGroupList{},
+			Managed: &v1beta1.PlacementGroup{},
 		},
 	})
 	if err != nil {
@@ -203,8 +169,8 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 		Reference:    mg.Spec.ForProvider.ServiceLinkedRoleArnRef,
 		Selector:     mg.Spec.ForProvider.ServiceLinkedRoleArnSelector,
 		To: reference.To{
-			List:    &v1beta13.RoleList{},
-			Managed: &v1beta13.Role{},
+			List:    &v1beta11.RoleList{},
+			Managed: &v1beta11.Role{},
 		},
 	})
 	if err != nil {
@@ -212,48 +178,6 @@ func (mg *AutoscalingGroup) ResolveReferences(ctx context.Context, c client.Read
 	}
 	mg.Spec.ForProvider.ServiceLinkedRoleArn = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.ServiceLinkedRoleArnRef = rsp.ResolvedReference
-
-	mrsp, err = r.ResolveMultiple(ctx, reference.MultiResolutionRequest{
-		CurrentValues: reference.FromPtrValues(mg.Spec.ForProvider.VPCZoneIdentifier),
-		Extract:       reference.ExternalName(),
-		References:    mg.Spec.ForProvider.VPCZoneIdentifierRefs,
-		Selector:      mg.Spec.ForProvider.VPCZoneIdentifierSelector,
-		To: reference.To{
-			List:    &v1beta12.SubnetList{},
-			Managed: &v1beta12.Subnet{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.VPCZoneIdentifier")
-	}
-	mg.Spec.ForProvider.VPCZoneIdentifier = reference.ToPtrValues(mrsp.ResolvedValues)
-	mg.Spec.ForProvider.VPCZoneIdentifierRefs = mrsp.ResolvedReferences
-
-	return nil
-}
-
-// ResolveReferences of this GroupTag.
-func (mg *GroupTag) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var rsp reference.ResolutionResponse
-	var err error
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.AutoscalingGroupName),
-		Extract:      reference.ExternalName(),
-		Reference:    mg.Spec.ForProvider.AutoscalingGroupNameRef,
-		Selector:     mg.Spec.ForProvider.AutoscalingGroupNameSelector,
-		To: reference.To{
-			List:    &AutoscalingGroupList{},
-			Managed: &AutoscalingGroup{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.AutoscalingGroupName")
-	}
-	mg.Spec.ForProvider.AutoscalingGroupName = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.AutoscalingGroupNameRef = rsp.ResolvedReference
 
 	return nil
 }
@@ -287,8 +211,8 @@ func (mg *LifecycleHook) ResolveReferences(ctx context.Context, c client.Reader)
 		Reference:    mg.Spec.ForProvider.RoleArnRef,
 		Selector:     mg.Spec.ForProvider.RoleArnSelector,
 		To: reference.To{
-			List:    &v1beta13.RoleList{},
-			Managed: &v1beta13.Role{},
+			List:    &v1beta11.RoleList{},
+			Managed: &v1beta11.Role{},
 		},
 	})
 	if err != nil {
@@ -296,32 +220,6 @@ func (mg *LifecycleHook) ResolveReferences(ctx context.Context, c client.Reader)
 	}
 	mg.Spec.ForProvider.RoleArn = reference.ToPtrValue(rsp.ResolvedValue)
 	mg.Spec.ForProvider.RoleArnRef = rsp.ResolvedReference
-
-	return nil
-}
-
-// ResolveReferences of this Notification.
-func (mg *Notification) ResolveReferences(ctx context.Context, c client.Reader) error {
-	r := reference.NewAPIResolver(c, mg)
-
-	var rsp reference.ResolutionResponse
-	var err error
-
-	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
-		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.TopicArn),
-		Extract:      resource.ExtractParamPath("arn", true),
-		Reference:    mg.Spec.ForProvider.TopicArnRef,
-		Selector:     mg.Spec.ForProvider.TopicArnSelector,
-		To: reference.To{
-			List:    &v1beta14.TopicList{},
-			Managed: &v1beta14.Topic{},
-		},
-	})
-	if err != nil {
-		return errors.Wrap(err, "mg.Spec.ForProvider.TopicArn")
-	}
-	mg.Spec.ForProvider.TopicArn = reference.ToPtrValue(rsp.ResolvedValue)
-	mg.Spec.ForProvider.TopicArnRef = rsp.ResolvedReference
 
 	return nil
 }

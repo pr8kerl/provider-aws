@@ -39,18 +39,8 @@ type SecretRotationParameters struct {
 	Region *string `json:"region" tf:"-"`
 
 	// Specifies the ARN of the Lambda function that can rotate the secret.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/lambda/v1beta1.Function
-	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("arn",true)
 	// +kubebuilder:validation:Optional
 	RotationLambdaArn *string `json:"rotationLambdaArn,omitempty" tf:"rotation_lambda_arn,omitempty"`
-
-	// Reference to a Function in lambda to populate rotationLambdaArn.
-	// +kubebuilder:validation:Optional
-	RotationLambdaArnRef *v1.Reference `json:"rotationLambdaArnRef,omitempty" tf:"-"`
-
-	// Selector for a Function in lambda to populate rotationLambdaArn.
-	// +kubebuilder:validation:Optional
-	RotationLambdaArnSelector *v1.Selector `json:"rotationLambdaArnSelector,omitempty" tf:"-"`
 
 	// A structure that defines the rotation configuration for this secret. Defined below.
 	// +kubebuilder:validation:Optional
@@ -108,6 +98,7 @@ type SecretRotationStatus struct {
 type SecretRotation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
+	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.rotationLambdaArn)",message="rotationLambdaArn is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.rotationRules)",message="rotationRules is a required parameter"
 	Spec   SecretRotationSpec   `json:"spec"`
 	Status SecretRotationStatus `json:"status,omitempty"`

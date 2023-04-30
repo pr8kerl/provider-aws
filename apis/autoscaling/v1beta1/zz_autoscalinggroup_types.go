@@ -279,6 +279,11 @@ type AutoscalingGroupParameters struct {
 	// +kubebuilder:validation:Optional
 	LaunchTemplate []LaunchTemplateParameters `json:"launchTemplate,omitempty" tf:"launch_template,omitempty"`
 
+	// List of elastic load balancer names to add to the autoscaling
+	// group names. Only valid for classic load balancers. For ALBs, use target_group_arns instead.
+	// +kubebuilder:validation:Optional
+	LoadBalancers []*string `json:"loadBalancers,omitempty" tf:"load_balancers,omitempty"`
+
 	// Maximum amount of time, in seconds, that an instance can be in service, values must be either equal to 0 or between 86400 and 31536000 seconds.
 	// +kubebuilder:validation:Optional
 	MaxInstanceLifetime *float64 `json:"maxInstanceLifetime,omitempty" tf:"max_instance_lifetime,omitempty"`
@@ -356,22 +361,17 @@ type AutoscalingGroupParameters struct {
 	// +kubebuilder:validation:Optional
 	Tags []map[string]*string `json:"tags,omitempty" tf:"tags,omitempty"`
 
+	// Set of aws_alb_target_group ARNs, for use with Application or Network Load Balancing.
+	// +kubebuilder:validation:Optional
+	TargetGroupArns []*string `json:"targetGroupArns,omitempty" tf:"target_group_arns,omitempty"`
+
 	// List of policies to decide how the instances in the Auto Scaling Group should be terminated. The allowed values are OldestInstance, NewestInstance, OldestLaunchConfiguration, ClosestToNextInstanceHour, OldestLaunchTemplate, AllocationStrategy, Default. Additionally, the ARN of a Lambda function can be specified for custom termination policies.
 	// +kubebuilder:validation:Optional
 	TerminationPolicies []*string `json:"terminationPolicies,omitempty" tf:"termination_policies,omitempty"`
 
 	// List of subnet IDs to launch resources in. Subnets automatically determine which availability zones the group will reside. Conflicts with availability_zones.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/ec2/v1beta1.Subnet
 	// +kubebuilder:validation:Optional
 	VPCZoneIdentifier []*string `json:"vpcZoneIdentifier,omitempty" tf:"vpc_zone_identifier,omitempty"`
-
-	// References to Subnet in ec2 to populate vpcZoneIdentifier.
-	// +kubebuilder:validation:Optional
-	VPCZoneIdentifierRefs []v1.Reference `json:"vpcZoneIdentifierRefs,omitempty" tf:"-"`
-
-	// Selector for a list of Subnet in ec2 to populate vpcZoneIdentifier.
-	// +kubebuilder:validation:Optional
-	VPCZoneIdentifierSelector *v1.Selector `json:"vpcZoneIdentifierSelector,omitempty" tf:"-"`
 
 	// (See also Waiting
 	// for Capacity below.
@@ -730,8 +730,18 @@ type LaunchTemplateParameters struct {
 	Name *string `json:"name,omitempty" tf:"name,omitempty"`
 
 	// Template version. Can be version number, $Latest, or $Default. (Default: $Default).
+	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/ec2/v1beta1.LaunchTemplate
+	// +crossplane:generate:reference:extractor=github.com/upbound/upjet/pkg/resource.ExtractParamPath("latest_version",true)
 	// +kubebuilder:validation:Optional
 	Version *string `json:"version,omitempty" tf:"version,omitempty"`
+
+	// Reference to a LaunchTemplate in ec2 to populate version.
+	// +kubebuilder:validation:Optional
+	VersionRef *v1.Reference `json:"versionRef,omitempty" tf:"-"`
+
+	// Selector for a LaunchTemplate in ec2 to populate version.
+	// +kubebuilder:validation:Optional
+	VersionSelector *v1.Selector `json:"versionSelector,omitempty" tf:"-"`
 }
 
 type LaunchTemplateSpecificationObservation struct {

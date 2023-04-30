@@ -646,16 +646,6 @@ func (in *SecretRotationParameters) DeepCopyInto(out *SecretRotationParameters) 
 		*out = new(string)
 		**out = **in
 	}
-	if in.RotationLambdaArnRef != nil {
-		in, out := &in.RotationLambdaArnRef, &out.RotationLambdaArnRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.RotationLambdaArnSelector != nil {
-		in, out := &in.RotationLambdaArnSelector, &out.RotationLambdaArnSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
-	}
 	if in.RotationRules != nil {
 		in, out := &in.RotationRules, &out.RotationRules
 		*out = make([]SecretRotationRotationRulesParameters, len(*in))

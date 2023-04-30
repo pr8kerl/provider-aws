@@ -1495,16 +1495,6 @@ func (in *LogPublishingOptionsParameters) DeepCopyInto(out *LogPublishingOptions
 		*out = new(string)
 		**out = **in
 	}
-	if in.CloudwatchLogGroupArnRef != nil {
-		in, out := &in.CloudwatchLogGroupArnRef, &out.CloudwatchLogGroupArnRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.CloudwatchLogGroupArnSelector != nil {
-		in, out := &in.CloudwatchLogGroupArnSelector, &out.CloudwatchLogGroupArnSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
-	}
 	if in.Enabled != nil {
 		in, out := &in.Enabled, &out.Enabled
 		*out = new(bool)

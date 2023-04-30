@@ -221,16 +221,6 @@ func (in *AttachmentParameters) DeepCopyInto(out *AttachmentParameters) {
 		*out = new(string)
 		**out = **in
 	}
-	if in.ALBTargetGroupArnRef != nil {
-		in, out := &in.ALBTargetGroupArnRef, &out.ALBTargetGroupArnRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.ALBTargetGroupArnSelector != nil {
-		in, out := &in.ALBTargetGroupArnSelector, &out.ALBTargetGroupArnSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
-	}
 	if in.AutoscalingGroupName != nil {
 		in, out := &in.AutoscalingGroupName, &out.AutoscalingGroupName
 		*out = new(string)
@@ -251,30 +241,10 @@ func (in *AttachmentParameters) DeepCopyInto(out *AttachmentParameters) {
 		*out = new(string)
 		**out = **in
 	}
-	if in.ELBRef != nil {
-		in, out := &in.ELBRef, &out.ELBRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.ELBSelector != nil {
-		in, out := &in.ELBSelector, &out.ELBSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
-	}
 	if in.LBTargetGroupArn != nil {
 		in, out := &in.LBTargetGroupArn, &out.LBTargetGroupArn
 		*out = new(string)
 		**out = **in
-	}
-	if in.LBTargetGroupArnRef != nil {
-		in, out := &in.LBTargetGroupArnRef, &out.LBTargetGroupArnRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.LBTargetGroupArnSelector != nil {
-		in, out := &in.LBTargetGroupArnSelector, &out.LBTargetGroupArnSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
 	}
 	if in.Region != nil {
 		in, out := &in.Region, &out.Region
@@ -767,6 +737,17 @@ func (in *AutoscalingGroupParameters) DeepCopyInto(out *AutoscalingGroupParamete
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
+	if in.LoadBalancers != nil {
+		in, out := &in.LoadBalancers, &out.LoadBalancers
+		*out = make([]*string, len(*in))
+		for i := range *in {
+			if (*in)[i] != nil {
+				in, out := &(*in)[i], &(*out)[i]
+				*out = new(string)
+				**out = **in
+			}
+		}
+	}
 	if in.MaxInstanceLifetime != nil {
 		in, out := &in.MaxInstanceLifetime, &out.MaxInstanceLifetime
 		*out = new(float64)
@@ -878,6 +859,17 @@ func (in *AutoscalingGroupParameters) DeepCopyInto(out *AutoscalingGroupParamete
 			}
 		}
 	}
+	if in.TargetGroupArns != nil {
+		in, out := &in.TargetGroupArns, &out.TargetGroupArns
+		*out = make([]*string, len(*in))
+		for i := range *in {
+			if (*in)[i] != nil {
+				in, out := &(*in)[i], &(*out)[i]
+				*out = new(string)
+				**out = **in
+			}
+		}
+	}
 	if in.TerminationPolicies != nil {
 		in, out := &in.TerminationPolicies, &out.TerminationPolicies
 		*out = make([]*string, len(*in))
@@ -899,18 +891,6 @@ func (in *AutoscalingGroupParameters) DeepCopyInto(out *AutoscalingGroupParamete
 				**out = **in
 			}
 		}
-	}
-	if in.VPCZoneIdentifierRefs != nil {
-		in, out := &in.VPCZoneIdentifierRefs, &out.VPCZoneIdentifierRefs
-		*out = make([]v1.Reference, len(*in))
-		for i := range *in {
-			(*in)[i].DeepCopyInto(&(*out)[i])
-		}
-	}
-	if in.VPCZoneIdentifierSelector != nil {
-		in, out := &in.VPCZoneIdentifierSelector, &out.VPCZoneIdentifierSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
 	}
 	if in.WaitForCapacityTimeout != nil {
 		in, out := &in.WaitForCapacityTimeout, &out.WaitForCapacityTimeout
@@ -1801,16 +1781,6 @@ func (in *GroupTagParameters) DeepCopyInto(out *GroupTagParameters) {
 		in, out := &in.AutoscalingGroupName, &out.AutoscalingGroupName
 		*out = new(string)
 		**out = **in
-	}
-	if in.AutoscalingGroupNameRef != nil {
-		in, out := &in.AutoscalingGroupNameRef, &out.AutoscalingGroupNameRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.AutoscalingGroupNameSelector != nil {
-		in, out := &in.AutoscalingGroupNameSelector, &out.AutoscalingGroupNameSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
 	}
 	if in.Region != nil {
 		in, out := &in.Region, &out.Region
@@ -3007,6 +2977,16 @@ func (in *LaunchTemplateParameters) DeepCopyInto(out *LaunchTemplateParameters) 
 		in, out := &in.Version, &out.Version
 		*out = new(string)
 		**out = **in
+	}
+	if in.VersionRef != nil {
+		in, out := &in.VersionRef, &out.VersionRef
+		*out = new(v1.Reference)
+		(*in).DeepCopyInto(*out)
+	}
+	if in.VersionSelector != nil {
+		in, out := &in.VersionSelector, &out.VersionSelector
+		*out = new(v1.Selector)
+		(*in).DeepCopyInto(*out)
 	}
 }
 
@@ -4457,16 +4437,6 @@ func (in *NotificationParameters) DeepCopyInto(out *NotificationParameters) {
 		in, out := &in.TopicArn, &out.TopicArn
 		*out = new(string)
 		**out = **in
-	}
-	if in.TopicArnRef != nil {
-		in, out := &in.TopicArnRef, &out.TopicArnRef
-		*out = new(v1.Reference)
-		(*in).DeepCopyInto(*out)
-	}
-	if in.TopicArnSelector != nil {
-		in, out := &in.TopicArnSelector, &out.TopicArnSelector
-		*out = new(v1.Selector)
-		(*in).DeepCopyInto(*out)
 	}
 }
 

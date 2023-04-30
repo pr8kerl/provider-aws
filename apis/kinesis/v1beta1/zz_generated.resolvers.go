@@ -10,7 +10,7 @@ import (
 	reference "github.com/crossplane/crossplane-runtime/pkg/reference"
 	errors "github.com/pkg/errors"
 	v1beta1 "github.com/upbound/provider-aws/apis/kms/v1beta1"
-	common "github.com/upbound/provider-aws/config/common"
+	resource "github.com/upbound/upjet/pkg/resource"
 	client "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -49,7 +49,7 @@ func (mg *StreamConsumer) ResolveReferences(ctx context.Context, c client.Reader
 
 	rsp, err = r.Resolve(ctx, reference.ResolutionRequest{
 		CurrentValue: reference.FromPtrValue(mg.Spec.ForProvider.StreamArn),
-		Extract:      common.TerraformID(),
+		Extract:      resource.ExtractParamPath("arn", false),
 		Reference:    mg.Spec.ForProvider.StreamArnRef,
 		Selector:     mg.Spec.ForProvider.StreamArnSelector,
 		To: reference.To{

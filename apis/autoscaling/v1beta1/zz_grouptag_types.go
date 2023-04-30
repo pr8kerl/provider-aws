@@ -28,17 +28,8 @@ type GroupTagObservation struct {
 type GroupTagParameters struct {
 
 	// Name of the Autoscaling Group to apply the tag to.
-	// +crossplane:generate:reference:type=github.com/upbound/provider-aws/apis/autoscaling/v1beta1.AutoscalingGroup
 	// +kubebuilder:validation:Optional
 	AutoscalingGroupName *string `json:"autoscalingGroupName,omitempty" tf:"autoscaling_group_name,omitempty"`
-
-	// Reference to a AutoscalingGroup in autoscaling to populate autoscalingGroupName.
-	// +kubebuilder:validation:Optional
-	AutoscalingGroupNameRef *v1.Reference `json:"autoscalingGroupNameRef,omitempty" tf:"-"`
-
-	// Selector for a AutoscalingGroup in autoscaling to populate autoscalingGroupName.
-	// +kubebuilder:validation:Optional
-	AutoscalingGroupNameSelector *v1.Selector `json:"autoscalingGroupNameSelector,omitempty" tf:"-"`
 
 	// Region is the region you'd like your resource to be created in.
 	// +upjet:crd:field:TFTag=-
@@ -101,6 +92,7 @@ type GroupTagStatus struct {
 type GroupTag struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
+	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.autoscalingGroupName)",message="autoscalingGroupName is a required parameter"
 	// +kubebuilder:validation:XValidation:rule="self.managementPolicy == 'ObserveOnly' || has(self.forProvider.tag)",message="tag is a required parameter"
 	Spec   GroupTagSpec   `json:"spec"`
 	Status GroupTagStatus `json:"status,omitempty"`
