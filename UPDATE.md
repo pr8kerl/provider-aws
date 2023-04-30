@@ -44,8 +44,10 @@ High level steps gleaned from [here](https://github.com/crossplane/crossplane/is
   ```
   # remove all api folders
   ls -1 apis/ |grep -v -e .go -e v1alpha1 -e v1beta1|xargs -I % rm -rf apis/%
+  # remove all api folders
+  ls -1 internal/controller/ |grep -v -e .go -e providerconfig|xargs -I % rm -rf internal/controller/%
   # add back only those wanted
-  grep Configure, config/provider.go|grep -v '//'|cut -f1 -d'.'|xargs -I % git checkout apis/%
+  grep Configure, config/provider.go|grep -v '//'|cut -f1 -d'.'|xargs -I % git checkout apis/% internal/controller/%
   ```
 
 * make generate - watch for errors and fix - lol
